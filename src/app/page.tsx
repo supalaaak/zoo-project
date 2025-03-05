@@ -3,7 +3,7 @@
 
 import Head from 'next/head';
 import Link from 'next/link';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
@@ -277,7 +277,7 @@ export default function Home() {
                 }`}
               >
                 <div className="h-full flex flex-col justify-center">
-                  <p className="text-xl italic text-gray-600 text-center">"{testimonial.quote}"</p>
+                <p className="text-xl italic text-gray-600 text-center">&quot;{testimonial.quote}&quot;</p>
                   <div className="mt-6 text-center">
                     <p className="text-base font-medium text-gray-900">{testimonial.name}</p>
                     <p className="text-sm text-gray-500">{testimonial.role}</p>

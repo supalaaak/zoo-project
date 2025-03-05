@@ -393,7 +393,7 @@ export default function ZooQuest() {
             <div className="bg-white/20 backdrop-blur-sm py-2 px-4 rounded-full">
               <div className="flex items-center space-x-2">
                 <div className="text-2xl">{moonPhase}</div>
-                <span className="text-white text-sm">Today's Moon Phase</span>
+                <span className="text-white text-sm">Today&#39;s Moon Phase</span>
               </div>
             </div>
           </div>
@@ -446,7 +446,7 @@ export default function ZooQuest() {
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="bg-green-50 p-4 border-b border-green-100">
               <h2 className="text-2xl font-bold text-gray-900">Welcome to your Zoo Adventure!</h2>
-              <p className="text-gray-600">Let's start your quest by getting to know you a little better.</p>
+              <p className="text-gray-600">Let&#39;s start your quest by getting to know you a little better.</p>
             </div>
             
             <div className="p-6">
@@ -472,7 +472,7 @@ export default function ZooQuest() {
                 </select>
                 {currentLocation && (
                   <div className="mt-1 text-xs text-green-600">
-                    Location services active. We'll verify your zoo visit!
+                    Location services active. We&#39;ll verify your zoo visit!
                   </div>
                 )}
               </div>
@@ -491,7 +491,7 @@ export default function ZooQuest() {
               
               <div className="mb-4">
                 <label htmlFor="child-name" className="block text-sm font-medium text-gray-700 mb-1">
-                  What's your name?
+                  What&#39;s your name?
                 </label>
                 <input 
                   type="text" 
@@ -622,7 +622,7 @@ export default function ZooQuest() {
               
               <div className="mb-4">
                 <label htmlFor="animal1-eyes" className="block text-sm font-medium text-gray-700 mb-1">
-                  What color were the animal's eyes?
+                  What color were the animal&#39;s eyes?
                 </label>
                 <input 
                   type="text" 
@@ -756,7 +756,7 @@ export default function ZooQuest() {
               
               <div className="mb-4">
                 <label htmlFor="animal2-eyes" className="block text-sm font-medium text-gray-700 mb-1">
-                  What color were the animal's eyes?
+                  What color were the animal&#39;s eyes?
                 </label>
                 <input 
                   type="text" 
@@ -890,7 +890,7 @@ export default function ZooQuest() {
               
               <div className="mb-4">
                 <label htmlFor="animal3-eyes" className="block text-sm font-medium text-gray-700 mb-1">
-                  What color were the animal's eyes?
+                  What color were the animal&#39;s eyes?
                 </label>
                 <input 
                   type="text" 
