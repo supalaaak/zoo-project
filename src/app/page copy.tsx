@@ -139,7 +139,7 @@ export default function Home() {
               </p>
               <div className="mt-10 max-w-sm sm:flex sm:space-x-4">
                 <div className="rounded-md shadow">
-                  <Link href="/widgets">
+                  <Link href="/signup">
                     <span className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-green-700 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
                       Get Started
                     </span>
@@ -259,164 +259,13 @@ export default function Home() {
       </div>
 
       {/* Testimonials */}
-      <div className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center mb-12">
-            <h2 className="text-base text-green-600 font-semibold tracking-wide uppercase">Testimonials</h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              What Families Are Saying
-            </p>
-          </div>
-          
-          <div className="relative h-64 overflow-hidden">
-            {testimonials.map((testimonial, index) => (
-              <div 
-                key={index}
-                className={`absolute inset-0 transition-opacity duration-1000 ${
-                  currentSlide === index ? 'opacity-100' : 'opacity-0'
-                }`}
-              >
-                <div className="h-full flex flex-col justify-center">
-                  <p className="text-xl italic text-gray-600 text-center">"{testimonial.quote}"</p>
-                  <div className="mt-6 text-center">
-                    <p className="text-base font-medium text-gray-900">{testimonial.name}</p>
-                    <p className="text-sm text-gray-500">{testimonial.role}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="flex justify-center mt-4">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`h-3 w-3 mx-1 rounded-full ${
-                  currentSlide === index ? 'bg-green-600' : 'bg-gray-300'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Partner Zoos */}
-      <div className="bg-gray-50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center mb-12">
-            <h2 className="text-base text-green-600 font-semibold tracking-wide uppercase">Partners</h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              Participating Zoos
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
-            <div className="h-16 bg-gray-200 rounded flex items-center justify-center">
-              <span className="text-gray-500 font-medium">Central City Zoo</span>
-            </div>
-            <div className="h-16 bg-gray-200 rounded flex items-center justify-center">
-              <span className="text-gray-500 font-medium">Forest Park Zoo</span>
-            </div>
-            <div className="h-16 bg-gray-200 rounded flex items-center justify-center">
-              <span className="text-gray-500 font-medium">Mountain View Zoo</span>
-            </div>
-            <div className="h-16 bg-gray-200 rounded flex items-center justify-center">
-              <span className="text-gray-500 font-medium">Oceanside Aquarium</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Download App Section */}
-      {/* <div className="bg-green-600 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:flex lg:items-center lg:justify-between">
-            <div className="lg:w-1/2">
-              <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                <span className="block">Ready to start your adventure?</span>
-                <span className="block text-green-200">Download the Zoo Quest app today.</span>
-              </h2>
-              <p className="mt-4 text-lg text-green-100">
-                Available for iOS and Android devices. Take your quest with you wherever you go!
-              </p>
-              <div className="mt-8 flex space-x-4">
-                <a href="#" className="bg-white rounded-md py-3 px-6 flex items-center space-x-2">
-                  <span className="text-2xl">📱</span>
-                  <div>
-                    <p className="text-xs text-gray-600">Download on the</p>
-                    <p className="text-sm font-semibold text-gray-900">App Store</p>
-                  </div>
-                </a>
-                <a href="#" className="bg-white rounded-md py-3 px-6 flex items-center space-x-2">
-                  <span className="text-2xl">🤖</span>
-                  <div>
-                    <p className="text-xs text-gray-600">Get it on</p>
-                    <p className="text-sm font-semibold text-gray-900">Google Play</p>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div className="mt-10 lg:mt-0 lg:w-1/3">
-              <div className="bg-white rounded-lg shadow-xl overflow-hidden">
-                <div className="bg-gray-200 h-64 flex items-center justify-center">
-                  <span className="text-7xl">📱</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
+    
       {/* Footer */}
-      <footer className="bg-white">
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">About</h3>
-              <ul className="mt-4 space-y-4">
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Our Story</a></li>
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Team</a></li>
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Careers</a></li>
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Blog</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Resources</h3>
-              <ul className="mt-4 space-y-4">
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">For Teachers</a></li>
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">For Parents</a></li>
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">For Zoos</a></li>
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Activity Guides</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Support</h3>
-              <ul className="mt-4 space-y-4">
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Help Center</a></li>
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">FAQs</a></li>
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Contact Us</a></li>
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Privacy</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Connect</h3>
-              <ul className="mt-4 space-y-4">
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Twitter</a></li>
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Facebook</a></li>
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Instagram</a></li>
-                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">YouTube</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-12 border-t border-gray-200 pt-8">
-            <p className="text-base text-gray-400 text-center">
-              &copy; {new Date().getFullYear()} Zoo Quest Adventure. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+
     </div>
   );
 }
