@@ -1,0 +1,125 @@
+zoo-quest/
+├── node_modules/
+├── public/
+│   ├── favicon.ico
+│   ├── images/
+│   │   ├── animals/
+│   │   ├── badges/
+│   │   ├── icons/
+│   │   └── backgrounds/
+│   └── fonts/
+├── src/
+│   ├── app/
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx               # Main application layout
+│   │   ├── page.tsx                 # Homepage
+│   │   ├── about/
+│   │   │   └── page.tsx
+│   │   ├── features/
+│   │   │   └── page.tsx
+│   │   ├── for-educators/
+│   │   │   └── page.tsx
+│   │   ├── auth/
+│   │   │   ├── login/
+│   │   │   │   └── page.tsx
+│   │   │   └── signup/
+│   │   │       └── page.tsx
+│   │   ├── dashboard/
+│   │   │   ├── page.tsx             # Main dashboard with summary
+│   │   │   ├── home-edition/
+│   │   │   │   └── page.tsx         # Home observation dashboard
+│   │   │   └── zoo-visit/
+│   │   │       └── page.tsx         # Zoo visit dashboard
+│   │   ├── widgets/
+│   │   │   ├── page.tsx             # Widgets overview page
+│   │   │   └── [type]/
+│   │   │       └── page.tsx         # Individual widget page
+│   │   ├── observations/
+│   │   │   ├── page.tsx             # Observation history/list
+│   │   │   ├── new/
+│   │   │   │   └── page.tsx         # Create new observation
+│   │   │   └── [id]/
+│   │   │       └── page.tsx         # Individual observation details
+│   │   ├── streaks/
+│   │   │   └── page.tsx             # Observation streak tracking
+│   │   ├── badges/
+│   │   │   ├── page.tsx             # Badges collection/showcase
+│   │   │   └── [id]/
+│   │   │       └── page.tsx         # Individual badge details
+│   │   ├── rewards/
+│   │   │   ├── page.tsx             # Rewards catalog
+│   │   │   ├── redeem/
+│   │   │   │   └── page.tsx         # Redeem rewards page
+│   │   │   └── [id]/
+│   │   │       └── page.tsx         # Individual reward details
+│   │   ├── events/
+│   │   │   ├── page.tsx             # Upcoming events listing
+│   │   │   └── [id]/
+│   │   │       └── page.tsx         # Individual event details
+│   │   ├── profile/
+│   │   │   ├── page.tsx             # User profile
+│   │   │   └── settings/
+│   │   │       └── page.tsx         # User settings
+│   │   └── api/
+│   │       ├── auth/
+│   │       ├── observations/
+│   │       ├── badges/
+│   │       ├── rewards/
+│   │       └── events/
+│   ├── components/
+│   │   ├── ui/                      # Reusable UI components
+│   │   │   ├── button.tsx
+│   │   │   ├── card.tsx
+│   │   │   ├── input.tsx
+│   │   │   └── navbar.tsx
+│   │   ├── dashboard/               # Dashboard components
+│   │   │   ├── summary-card.tsx
+│   │   │   ├── streak-counter.tsx
+│   │   │   ├── recent-observations.tsx
+│   │   │   └── progress-chart.tsx
+│   │   ├── widgets/                 # Widget components
+│   │   │   ├── zoo-quest-widget.tsx
+│   │   │   ├── home-explorer-widget.tsx
+│   │   │   ├── weather-widget.tsx
+│   │   │   └── moon-phase-widget.tsx
+│   │   ├── observations/            # Observation components
+│   │   │   ├── observation-form.tsx
+│   │   │   ├── observation-card.tsx
+│   │   │   └── observation-filter.tsx
+│   │   ├── badges/                  # Badge components
+│   │   │   ├── badge-card.tsx
+│   │   │   └── badge-grid.tsx
+│   │   ├── rewards/                 # Reward components
+│   │   │   ├── reward-card.tsx
+│   │   │   └── redeem-form.tsx
+│   │   └── events/                  # Event components
+│   │       ├── event-card.tsx
+│   │       └── event-calendar.tsx
+│   ├── lib/
+│   │   ├── auth.ts                  # Authentication utilities
+│   │   ├── api.ts                   # API client
+│   │   ├── utils.ts                 # Utility functions
+│   │   ├── moon-phase.ts            # Moon phase calculations
+│   │   └── weather.ts               # Weather utilities
+│   ├── hooks/
+│   │   ├── use-auth.ts              # Authentication hook
+│   │   ├── use-observations.ts      # Observations hook
+│   │   ├── use-badges.ts            # Badges hook
+│   │   └── use-streak.ts            # Streak tracking hook
+│   ├── types/
+│   │   ├── observation.ts           # Observation type definitions
+│   │   ├── badge.ts                 # Badge type definitions
+│   │   ├── reward.ts                # Reward type definitions
+│   │   └── user.ts                  # User type definitions
+│   └── context/
+│       ├── auth-context.tsx         # Authentication context
+│       └── app-context.tsx          # Application state context
+├── .eslintrc.json
+├── .gitignore
+├── next.config.js
+├── package.json
+├── postcss.config.js
+├── README.md
+├── tailwind.config.js
+└── tsconfig.json

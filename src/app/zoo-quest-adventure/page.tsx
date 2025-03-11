@@ -1,9 +1,13 @@
-// pages/zoo-quest.js
+//src/app/zoo-quest-adventure/page.tsx
 'use client'
 
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { 
+  Navbar,
+  Footer
+} from '@/components';
 
 export default function ZooQuest() {
   // State management
@@ -69,6 +73,8 @@ export default function ZooQuest() {
     }
   ];
 
+  
+
   // Get user's current location
   useEffect(() => {
     if (navigator.geolocation) {
@@ -89,8 +95,31 @@ export default function ZooQuest() {
     }
   }, []);
 
+  // Function to get fresh location data
+  const getCurrentLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            });
+          },
+          (error) => {
+            console.error('Error getting location:', error);
+            reject('Unable to access your location.');
+          }
+        );
+      } else {
+        reject('Geolocation is not supported by your browser.');
+      }
+    });
+  };
+
+
   // Function to calculate distance between two coordinates in kilometers
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371; // Earth's radius in km
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -103,7 +132,7 @@ export default function ZooQuest() {
   };
 
   // Function to check if user is near selected zoo
-  const isNearZoo = (zooId) => {
+  const isNearZoo = (zooId : string) => {
     if (!currentLocation) return null; // Can't verify
     
     const selectedZoo = zoos.find(zoo => zoo.id === zooId);
@@ -121,7 +150,7 @@ export default function ZooQuest() {
   };
 
   // Get available animals based on selected zoo
-  const getAvailableAnimals = (zooId) => {
+  const getAvailableAnimals = (zooId : string) => {
     const selectedZoo = zoos.find(zoo => zoo.id === zooId) || zoos.find(zoo => zoo.id === 'other');
     // If there are more than 15 animals, return them all, otherwise return the specific zoo's animals
     const zooAnimals = selectedZoo.animals || [];
@@ -218,34 +247,36 @@ export default function ZooQuest() {
   };
   
   // Select an animal
-  const selectAnimal = (animal, number) => {
-    // Get current timestamp and location
+  // Updated selectAnimal function that refreshes location data
+  const selectAnimal = async (animal, number) => {
+    // Get current timestamp
     const timestamp = new Date().toISOString();
+    
+    // Get fresh location data
+    let locationStr = 'Location not available';
+    try {
+      const freshLocation = await getCurrentLocation();
+      setCurrentLocation(freshLocation); // Update the state with fresh coordinates
+      locationStr = `${freshLocation.latitude.toFixed(6)}, ${freshLocation.longitude.toFixed(6)}`;
+    } catch (error) {
+      console.error('Error updating location:', error);
+    }
     
     if (number === 1) {
       setSelectedAnimal1(animal);
       document.getElementById('animal1-name').value = animal.charAt(0).toUpperCase() + animal.slice(1);
       document.getElementById('animal1-timestamp').value = timestamp;
-      if (currentLocation) {
-        document.getElementById('animal1-location').value = 
-          `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`;
-      }
+      document.getElementById('animal1-location').value = locationStr;
     } else if (number === 2) {
       setSelectedAnimal2(animal);
       document.getElementById('animal2-name').value = animal.charAt(0).toUpperCase() + animal.slice(1);
       document.getElementById('animal2-timestamp').value = timestamp;
-      if (currentLocation) {
-        document.getElementById('animal2-location').value = 
-          `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`;
-      }
+      document.getElementById('animal2-location').value = locationStr;
     } else if (number === 3) {
       setSelectedAnimal3(animal);
       document.getElementById('animal3-name').value = animal.charAt(0).toUpperCase() + animal.slice(1);
       document.getElementById('animal3-timestamp').value = timestamp;
-      if (currentLocation) {
-        document.getElementById('animal3-location').value = 
-          `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`;
-      }
+      document.getElementById('animal3-location').value = locationStr;
     }
   };
   
@@ -347,41 +378,7 @@ export default function ZooQuest() {
       </Head>
 
       {/* Navigation */}
-      <nav className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <span className="text-2xl font-bold text-green-600">Zoo Quest</span>
-              </div>
-              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                <Link href="/">
-                  <span className="border-transparent text-gray-500 hover:border-green-500 hover:text-green-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                    Home
-                  </span>
-                </Link>
-                <Link href="/about">
-                  <span className="border-transparent text-gray-500 hover:border-green-500 hover:text-green-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                    About
-                  </span>
-                </Link>
-                <Link href="/features">
-                  <span className="border-transparent text-gray-500 hover:border-green-500 hover:text-green-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                    Features
-                  </span>
-                </Link>
-              </div>
-            </div>
-            <div className="hidden sm:ml-6 sm:flex sm:items-center">
-              <Link href="/login">
-                <span className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md">
-                  Sign In
-                </span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
       
       {/* Page Header */}
       <div className="bg-gradient-to-r from-green-600 to-teal-600 py-8 mb-8">
@@ -393,7 +390,7 @@ export default function ZooQuest() {
             <div className="bg-white/20 backdrop-blur-sm py-2 px-4 rounded-full">
               <div className="flex items-center space-x-2">
                 <div className="text-2xl">{moonPhase}</div>
-                <span className="text-white text-sm">Today&#39;s Moon Phase</span>
+                <span className="text-white text-sm">Today's Moon Phase</span>
               </div>
             </div>
           </div>
@@ -446,7 +443,7 @@ export default function ZooQuest() {
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="bg-green-50 p-4 border-b border-green-100">
               <h2 className="text-2xl font-bold text-gray-900">Welcome to your Zoo Adventure!</h2>
-              <p className="text-gray-600">Let&#39;s start your quest by getting to know you a little better.</p>
+              <p className="text-gray-600">Let's start your quest by getting to know you a little better.</p>
             </div>
             
             <div className="p-6">
@@ -472,7 +469,7 @@ export default function ZooQuest() {
                 </select>
                 {currentLocation && (
                   <div className="mt-1 text-xs text-green-600">
-                    Location services active. We&#39;ll verify your zoo visit!
+                    Location services active. We'll verify your zoo visit!
                   </div>
                 )}
               </div>
@@ -491,7 +488,7 @@ export default function ZooQuest() {
               
               <div className="mb-4">
                 <label htmlFor="child-name" className="block text-sm font-medium text-gray-700 mb-1">
-                  What&#39;s your name?
+                  What's your name?
                 </label>
                 <input 
                   type="text" 
@@ -535,40 +532,55 @@ export default function ZooQuest() {
             
             <div className="p-6">
               <p className="text-gray-600 mb-4">Select the animal you discovered:</p>
-              <div className="relative mb-6">
-                {/* Scrollable animal selection */}
-                <div className="overflow-x-auto pb-2 flex space-x-2 items-center" style={{ scrollbarWidth: 'none' }}>
-                  {questData.selectedZoo && getAvailableAnimals(questData.selectedZoo).length > 0 ? 
-                    getAvailableAnimals(questData.selectedZoo).map((animal) => (
-                      <button 
-                        key={animal}
-                        onClick={() => selectAnimal(animal, 1)}
-                        className={`text-4xl p-3 rounded-full flex-shrink-0 transition-all duration-300 ${
-                          selectedAnimal1 === animal ? 'bg-amber-100 scale-110' : 'hover:bg-gray-100 hover:scale-105'
-                        }`}
-                      >
-                        {animalEmojis[animal]}
-                      </button>
-                    )) :
-                    Object.entries(animalEmojis).slice(0, 5).map(([animal, emoji]) => (
-                      <button 
-                        key={animal}
-                        onClick={() => selectAnimal(animal, 1)}
-                        className={`text-4xl p-3 rounded-full flex-shrink-0 transition-all duration-300 ${
-                          selectedAnimal1 === animal ? 'bg-amber-100 scale-110' : 'hover:bg-gray-100 hover:scale-105'
-                        }`}
-                      >
-                        {emoji}
-                      </button>
-                    ))
-                  }
+              
+              {/* Animal selection with fixed first 5 and scrollable remainder */}
+              <div className="mb-6">
+                {/* First 5 animals always visible */}
+                <div className="flex justify-between mb-4">
+                  {(questData.selectedZoo && getAvailableAnimals(questData.selectedZoo).length > 0 
+                    ? getAvailableAnimals(questData.selectedZoo).slice(0, 5) 
+                    : Object.keys(animalEmojis).slice(0, 5)
+                  ).map((animal) => (
+                    <button 
+                      key={animal}
+                      onClick={() => selectAnimal(animal, 1)}
+                      className={`text-4xl p-3 rounded-full transition-all duration-300 ${
+                        selectedAnimal1 === animal ? 'bg-amber-100 scale-110' : 'hover:bg-gray-100 hover:scale-105'
+                      }`}
+                    >
+                      {animalEmojis[animal]}
+                    </button>
+                  ))}
                 </div>
                 
-                {/* Scroll indicators if there are more than 5 animals */}
-                {questData.selectedZoo && getAvailableAnimals(questData.selectedZoo).length > 5 && (
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <div className="bg-gradient-to-l from-white to-transparent w-12 h-full"></div>
-                    <div className="text-gray-400 animate-bounce">→</div>
+                {/* Scrollable section for remaining animals */}
+                {(questData.selectedZoo 
+                  ? getAvailableAnimals(questData.selectedZoo).length > 5 
+                  : Object.keys(animalEmojis).length > 5
+                ) && (
+                  <div className="relative">
+                    <div className="overflow-x-auto pb-2 flex space-x-3 items-center px-1" style={{ scrollbarWidth: 'none' }}>
+                      {(questData.selectedZoo && getAvailableAnimals(questData.selectedZoo).length > 0 
+                        ? getAvailableAnimals(questData.selectedZoo).slice(5) 
+                        : Object.keys(animalEmojis).slice(5)
+                      ).map((animal) => (
+                        <button 
+                          key={animal}
+                          onClick={() => selectAnimal(animal, 1)}
+                          className={`text-4xl p-3 rounded-full flex-shrink-0 transition-all duration-300 ${
+                            selectedAnimal1 === animal ? 'bg-amber-100 scale-110' : 'hover:bg-gray-100 hover:scale-105'
+                          }`}
+                        >
+                          {animalEmojis[animal]}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {/* Scroll indicator */}
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <div className="bg-gradient-to-l from-white to-transparent w-12 h-full"></div>
+                      <div className="text-gray-400 animate-bounce">→</div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -622,7 +634,7 @@ export default function ZooQuest() {
               
               <div className="mb-4">
                 <label htmlFor="animal1-eyes" className="block text-sm font-medium text-gray-700 mb-1">
-                  What color were the animal&#39;s eyes?
+                  What color were the animal's eyes?
                 </label>
                 <input 
                   type="text" 
@@ -669,40 +681,55 @@ export default function ZooQuest() {
             
             <div className="p-6">
               <p className="text-gray-600 mb-4">Select the animal you discovered:</p>
-              <div className="relative mb-6">
-                {/* Scrollable animal selection */}
-                <div className="overflow-x-auto pb-2 flex space-x-2 items-center" style={{ scrollbarWidth: 'none' }}>
-                  {questData.selectedZoo && getAvailableAnimals(questData.selectedZoo).length > 0 ? 
-                    getAvailableAnimals(questData.selectedZoo).map((animal) => (
-                      <button 
-                        key={animal}
-                        onClick={() => selectAnimal(animal, 2)}
-                        className={`text-4xl p-3 rounded-full flex-shrink-0 transition-all duration-300 ${
-                          selectedAnimal2 === animal ? 'bg-emerald-100 scale-110' : 'hover:bg-gray-100 hover:scale-105'
-                        }`}
-                      >
-                        {animalEmojis[animal]}
-                      </button>
-                    )) :
-                    Object.entries(animalEmojis).slice(5, 10).map(([animal, emoji]) => (
-                      <button 
-                        key={animal}
-                        onClick={() => selectAnimal(animal, 2)}
-                        className={`text-4xl p-3 rounded-full flex-shrink-0 transition-all duration-300 ${
-                          selectedAnimal2 === animal ? 'bg-emerald-100 scale-110' : 'hover:bg-gray-100 hover:scale-105'
-                        }`}
-                      >
-                        {emoji}
-                      </button>
-                    ))
-                  }
+              
+              {/* Animal selection with fixed first 5 and scrollable remainder */}
+              <div className="mb-6">
+                {/* First 5 animals always visible */}
+                <div className="flex justify-between mb-4">
+                  {(questData.selectedZoo && getAvailableAnimals(questData.selectedZoo).length > 0 
+                    ? getAvailableAnimals(questData.selectedZoo).slice(0, 5) 
+                    : Object.keys(animalEmojis).slice(0, 5)
+                  ).map((animal) => (
+                    <button 
+                      key={animal}
+                      onClick={() => selectAnimal(animal, 2)}
+                      className={`text-4xl p-3 rounded-full transition-all duration-300 ${
+                        selectedAnimal2 === animal ? 'bg-emerald-100 scale-110' : 'hover:bg-gray-100 hover:scale-105'
+                      }`}
+                    >
+                      {animalEmojis[animal]}
+                    </button>
+                  ))}
                 </div>
                 
-                {/* Scroll indicators if there are more than 5 animals */}
-                {questData.selectedZoo && getAvailableAnimals(questData.selectedZoo).length > 5 && (
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <div className="bg-gradient-to-l from-white to-transparent w-12 h-full"></div>
-                    <div className="text-gray-400 animate-bounce">→</div>
+                {/* Scrollable section for remaining animals */}
+                {(questData.selectedZoo 
+                  ? getAvailableAnimals(questData.selectedZoo).length > 5 
+                  : Object.keys(animalEmojis).length > 5
+                ) && (
+                  <div className="relative">
+                    <div className="overflow-x-auto pb-2 flex space-x-3 items-center px-1" style={{ scrollbarWidth: 'none' }}>
+                      {(questData.selectedZoo && getAvailableAnimals(questData.selectedZoo).length > 0 
+                        ? getAvailableAnimals(questData.selectedZoo).slice(5) 
+                        : Object.keys(animalEmojis).slice(5)
+                      ).map((animal) => (
+                        <button 
+                          key={animal}
+                          onClick={() => selectAnimal(animal, 2)}
+                          className={`text-4xl p-3 rounded-full flex-shrink-0 transition-all duration-300 ${
+                            selectedAnimal2 === animal ? 'bg-emerald-100 scale-110' : 'hover:bg-gray-100 hover:scale-105'
+                          }`}
+                        >
+                          {animalEmojis[animal]}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {/* Scroll indicator */}
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <div className="bg-gradient-to-l from-white to-transparent w-12 h-full"></div>
+                      <div className="text-gray-400 animate-bounce">→</div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -756,7 +783,7 @@ export default function ZooQuest() {
               
               <div className="mb-4">
                 <label htmlFor="animal2-eyes" className="block text-sm font-medium text-gray-700 mb-1">
-                  What color were the animal&#39;s eyes?
+                  What color were the animal's eyes?
                 </label>
                 <input 
                   type="text" 
@@ -803,40 +830,55 @@ export default function ZooQuest() {
             
             <div className="p-6">
               <p className="text-gray-600 mb-4">Select the animal you discovered:</p>
-              <div className="relative mb-6">
-                {/* Scrollable animal selection */}
-                <div className="overflow-x-auto pb-2 flex space-x-2 items-center" style={{ scrollbarWidth: 'none' }}>
-                  {questData.selectedZoo && getAvailableAnimals(questData.selectedZoo).length > 0 ? 
-                    getAvailableAnimals(questData.selectedZoo).map((animal) => (
-                      <button 
-                        key={animal}
-                        onClick={() => selectAnimal(animal, 3)}
-                        className={`text-4xl p-3 rounded-full flex-shrink-0 transition-all duration-300 ${
-                          selectedAnimal3 === animal ? 'bg-purple-100 scale-110' : 'hover:bg-gray-100 hover:scale-105'
-                        }`}
-                      >
-                        {animalEmojis[animal]}
-                      </button>
-                    )) :
-                    Object.entries(animalEmojis).slice(10, 15).map(([animal, emoji]) => (
-                      <button 
-                        key={animal}
-                        onClick={() => selectAnimal(animal, 3)}
-                        className={`text-4xl p-3 rounded-full flex-shrink-0 transition-all duration-300 ${
-                          selectedAnimal3 === animal ? 'bg-purple-100 scale-110' : 'hover:bg-gray-100 hover:scale-105'
-                        }`}
-                      >
-                        {emoji}
-                      </button>
-                    ))
-                  }
+              
+              {/* Animal selection with fixed first 5 and scrollable remainder */}
+              <div className="mb-6">
+                {/* First 5 animals always visible */}
+                <div className="flex justify-between mb-4">
+                  {(questData.selectedZoo && getAvailableAnimals(questData.selectedZoo).length > 0 
+                    ? getAvailableAnimals(questData.selectedZoo).slice(0, 5) 
+                    : Object.keys(animalEmojis).slice(0, 5)
+                  ).map((animal) => (
+                    <button 
+                      key={animal}
+                      onClick={() => selectAnimal(animal, 3)}
+                      className={`text-4xl p-3 rounded-full transition-all duration-300 ${
+                        selectedAnimal3 === animal ? 'bg-purple-100 scale-110' : 'hover:bg-gray-100 hover:scale-105'
+                      }`}
+                    >
+                      {animalEmojis[animal]}
+                    </button>
+                  ))}
                 </div>
                 
-                {/* Scroll indicators if there are more than 5 animals */}
-                {questData.selectedZoo && getAvailableAnimals(questData.selectedZoo).length > 5 && (
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <div className="bg-gradient-to-l from-white to-transparent w-12 h-full"></div>
-                    <div className="text-gray-400 animate-bounce">→</div>
+                {/* Scrollable section for remaining animals */}
+                {(questData.selectedZoo 
+                  ? getAvailableAnimals(questData.selectedZoo).length > 5 
+                  : Object.keys(animalEmojis).length > 5
+                ) && (
+                  <div className="relative">
+                    <div className="overflow-x-auto pb-2 flex space-x-3 items-center px-1" style={{ scrollbarWidth: 'none' }}>
+                      {(questData.selectedZoo && getAvailableAnimals(questData.selectedZoo).length > 0 
+                        ? getAvailableAnimals(questData.selectedZoo).slice(5) 
+                        : Object.keys(animalEmojis).slice(5)
+                      ).map((animal) => (
+                        <button 
+                          key={animal}
+                          onClick={() => selectAnimal(animal, 3)}
+                          className={`text-4xl p-3 rounded-full flex-shrink-0 transition-all duration-300 ${
+                            selectedAnimal3 === animal ? 'bg-purple-100 scale-110' : 'hover:bg-gray-100 hover:scale-105'
+                          }`}
+                        >
+                          {animalEmojis[animal]}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {/* Scroll indicator */}
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <div className="bg-gradient-to-l from-white to-transparent w-12 h-full"></div>
+                      <div className="text-gray-400 animate-bounce">→</div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -890,7 +932,7 @@ export default function ZooQuest() {
               
               <div className="mb-4">
                 <label htmlFor="animal3-eyes" className="block text-sm font-medium text-gray-700 mb-1">
-                  What color were the animal&#39;s eyes?
+                  What color were the animal's eyes?
                 </label>
                 <input 
                   type="text" 
@@ -997,6 +1039,9 @@ export default function ZooQuest() {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
