@@ -9,17 +9,47 @@ import {
   Footer
 } from '@/components';
 
+// Define types for our state
+interface Location {
+  latitude: number;
+  longitude: number;
+}
+
+interface Zoo {
+  id: string;
+  name: string;
+  location: Location | null;
+  animals: string[];
+}
+
+interface AnimalData {
+  name: string;
+  doing: string;
+  color: string;
+  eyes: string;
+  timestamp: string;
+  location: string;
+}
+
+interface QuestData {
+  name: string;
+  age: string;
+  date: string;
+  selectedZoo: string;
+  animals: AnimalData[];
+}
+
 export default function ZooQuest() {
   // State management
   const [step, setStep] = useState(0);
-  const [questData, setQuestData] = useState({
+  const [questData, setQuestData] = useState<QuestData>({
     name: '',
     age: '',
     date: '',
     selectedZoo: '',
     animals: []
   });
-  const [currentLocation, setCurrentLocation] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
   const [locationError, setLocationError] = useState('');
   
   const [selectedAnimal1, setSelectedAnimal1] = useState('');
@@ -28,7 +58,7 @@ export default function ZooQuest() {
   const [moonPhase, setMoonPhase] = useState('🌕');
   
   // Sample zoo locations - this would come from an API in production
-  const zoos = [
+  const zoos: Zoo[] = [
     {
       id: 'national-zoo',
       name: 'National Zoo',
@@ -73,8 +103,6 @@ export default function ZooQuest() {
     }
   ];
 
-  
-
   // Get user's current location
   useEffect(() => {
     if (navigator.geolocation) {
@@ -97,7 +125,7 @@ export default function ZooQuest() {
 
   // Function to get fresh location data
   const getCurrentLocation = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise<Location>((resolve, reject) => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -117,7 +145,6 @@ export default function ZooQuest() {
     });
   };
 
-
   // Function to calculate distance between two coordinates in kilometers
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371; // Earth's radius in km
@@ -132,7 +159,7 @@ export default function ZooQuest() {
   };
 
   // Function to check if user is near selected zoo
-  const isNearZoo = (zooId : string) => {
+  const isNearZoo = (zooId: string) => {
     if (!currentLocation) return null; // Can't verify
     
     const selectedZoo = zoos.find(zoo => zoo.id === zooId);
@@ -150,15 +177,15 @@ export default function ZooQuest() {
   };
 
   // Get available animals based on selected zoo
-  const getAvailableAnimals = (zooId : string) => {
+  const getAvailableAnimals = (zooId: string) => {
     const selectedZoo = zoos.find(zoo => zoo.id === zooId) || zoos.find(zoo => zoo.id === 'other');
     // If there are more than 15 animals, return them all, otherwise return the specific zoo's animals
-    const zooAnimals = selectedZoo.animals || [];
+    const zooAnimals = selectedZoo?.animals || [];
     return zooAnimals.length > 0 ? zooAnimals : Object.keys(animalEmojis);
   };
 
   // Animal emoji mapping
-  const animalEmojis = {
+  const animalEmojis: Record<string, string> = {
     'elephant': '🐘',
     'lion': '🦁',
     'giraffe': '🦒',
@@ -218,10 +245,20 @@ export default function ZooQuest() {
   
   // Start the quest
   const startQuest = () => {
-    const name = document.getElementById('child-name').value;
-    const age = document.getElementById('child-age').value;
-    const date = document.getElementById('visit-date').value;
-    const selectedZoo = document.getElementById('zoo-select').value;
+    const nameElement = document.getElementById('child-name') as HTMLInputElement | null;
+    const ageElement = document.getElementById('child-age') as HTMLInputElement | null;
+    const dateElement = document.getElementById('visit-date') as HTMLInputElement | null;
+    const zooElement = document.getElementById('zoo-select') as HTMLSelectElement | null;
+    
+    if (!nameElement || !ageElement || !dateElement || !zooElement) {
+      alert('Error: Form elements not found');
+      return;
+    }
+    
+    const name = nameElement.value;
+    const age = ageElement.value;
+    const date = dateElement.value;
+    const selectedZoo = zooElement.value;
     
     if (!name || !age || !date || !selectedZoo) {
       alert('Please fill out all the fields to start your quest!');
@@ -248,7 +285,7 @@ export default function ZooQuest() {
   
   // Select an animal
   // Updated selectAnimal function that refreshes location data
-  const selectAnimal = async (animal, number) => {
+  const selectAnimal = async (animal: string, number: number) => {
     // Get current timestamp
     const timestamp = new Date().toISOString();
     
@@ -264,31 +301,55 @@ export default function ZooQuest() {
     
     if (number === 1) {
       setSelectedAnimal1(animal);
-      document.getElementById('animal1-name').value = animal.charAt(0).toUpperCase() + animal.slice(1);
-      document.getElementById('animal1-timestamp').value = timestamp;
-      document.getElementById('animal1-location').value = locationStr;
+      const nameEl = document.getElementById('animal1-name') as HTMLInputElement | null;
+      const timestampEl = document.getElementById('animal1-timestamp') as HTMLInputElement | null;
+      const locationEl = document.getElementById('animal1-location') as HTMLInputElement | null;
+      
+      if (nameEl) nameEl.value = animal.charAt(0).toUpperCase() + animal.slice(1);
+      if (timestampEl) timestampEl.value = timestamp;
+      if (locationEl) locationEl.value = locationStr;
     } else if (number === 2) {
       setSelectedAnimal2(animal);
-      document.getElementById('animal2-name').value = animal.charAt(0).toUpperCase() + animal.slice(1);
-      document.getElementById('animal2-timestamp').value = timestamp;
-      document.getElementById('animal2-location').value = locationStr;
+      const nameEl = document.getElementById('animal2-name') as HTMLInputElement | null;
+      const timestampEl = document.getElementById('animal2-timestamp') as HTMLInputElement | null;
+      const locationEl = document.getElementById('animal2-location') as HTMLInputElement | null;
+      
+      if (nameEl) nameEl.value = animal.charAt(0).toUpperCase() + animal.slice(1);
+      if (timestampEl) timestampEl.value = timestamp;
+      if (locationEl) locationEl.value = locationStr;
     } else if (number === 3) {
       setSelectedAnimal3(animal);
-      document.getElementById('animal3-name').value = animal.charAt(0).toUpperCase() + animal.slice(1);
-      document.getElementById('animal3-timestamp').value = timestamp;
-      document.getElementById('animal3-location').value = locationStr;
+      const nameEl = document.getElementById('animal3-name') as HTMLInputElement | null;
+      const timestampEl = document.getElementById('animal3-timestamp') as HTMLInputElement | null;
+      const locationEl = document.getElementById('animal3-location') as HTMLInputElement | null;
+      
+      if (nameEl) nameEl.value = animal.charAt(0).toUpperCase() + animal.slice(1);
+      if (timestampEl) timestampEl.value = timestamp;
+      if (locationEl) locationEl.value = locationStr;
     }
   };
   
   // Next animal
-  const nextAnimal = (currentAnimal) => {
+  const nextAnimal = (currentAnimal: number) => {
     // Validate current animal data
-    const animalName = document.getElementById(`animal${currentAnimal}-name`).value;
-    const animalDoing = document.getElementById(`animal${currentAnimal}-doing`).value;
-    const animalColor = document.getElementById(`animal${currentAnimal}-color`).value;
-    const animalEyes = document.getElementById(`animal${currentAnimal}-eyes`).value;
-    const timestamp = document.getElementById(`animal${currentAnimal}-timestamp`).value;
-    const location = document.getElementById(`animal${currentAnimal}-location`).value;
+    const nameEl = document.getElementById(`animal${currentAnimal}-name`) as HTMLInputElement | null;
+    const doingEl = document.getElementById(`animal${currentAnimal}-doing`) as HTMLSelectElement | null;
+    const colorEl = document.getElementById(`animal${currentAnimal}-color`) as HTMLInputElement | null;
+    const eyesEl = document.getElementById(`animal${currentAnimal}-eyes`) as HTMLInputElement | null;
+    const timestampEl = document.getElementById(`animal${currentAnimal}-timestamp`) as HTMLInputElement | null;
+    const locationEl = document.getElementById(`animal${currentAnimal}-location`) as HTMLInputElement | null;
+    
+    if (!nameEl || !doingEl || !colorEl || !eyesEl) {
+      alert('Error: Form elements not found');
+      return;
+    }
+    
+    const animalName = nameEl.value;
+    const animalDoing = doingEl.value;
+    const animalColor = colorEl.value;
+    const animalEyes = eyesEl.value;
+    const timestamp = timestampEl?.value || new Date().toISOString();
+    const location = locationEl?.value || 'Location not available';
     
     if (!animalName || !animalDoing || !animalColor || !animalEyes) {
       alert('Please fill out all the information about this animal!');
@@ -302,8 +363,8 @@ export default function ZooQuest() {
       doing: animalDoing,
       color: animalColor,
       eyes: animalEyes,
-      timestamp: timestamp || new Date().toISOString(),
-      location: location || 'Location not available'
+      timestamp: timestamp,
+      location: location
     });
     
     setQuestData({
@@ -317,12 +378,24 @@ export default function ZooQuest() {
   // Complete quest
   const completeQuest = () => {
     // Validate last animal data
-    const animalName = document.getElementById('animal3-name').value;
-    const animalDoing = document.getElementById('animal3-doing').value;
-    const animalColor = document.getElementById('animal3-color').value;
-    const animalEyes = document.getElementById('animal3-eyes').value;
-    const timestamp = document.getElementById('animal3-timestamp').value;
-    const location = document.getElementById('animal3-location').value;
+    const nameEl = document.getElementById('animal3-name') as HTMLInputElement | null;
+    const doingEl = document.getElementById('animal3-doing') as HTMLSelectElement | null;
+    const colorEl = document.getElementById('animal3-color') as HTMLInputElement | null;
+    const eyesEl = document.getElementById('animal3-eyes') as HTMLInputElement | null;
+    const timestampEl = document.getElementById('animal3-timestamp') as HTMLInputElement | null;
+    const locationEl = document.getElementById('animal3-location') as HTMLInputElement | null;
+    
+    if (!nameEl || !doingEl || !colorEl || !eyesEl) {
+      alert('Error: Form elements not found');
+      return;
+    }
+    
+    const animalName = nameEl.value;
+    const animalDoing = doingEl.value;
+    const animalColor = colorEl.value;
+    const animalEyes = eyesEl.value;
+    const timestamp = timestampEl?.value || new Date().toISOString();
+    const location = locationEl?.value || 'Location not available';
     
     if (!animalName || !animalDoing || !animalColor || !animalEyes) {
       alert('Please fill out all the information about this animal!');
@@ -336,8 +409,8 @@ export default function ZooQuest() {
       doing: animalDoing,
       color: animalColor,
       eyes: animalEyes,
-      timestamp: timestamp || new Date().toISOString(),
-      location: location || 'Location not available'
+      timestamp: timestamp,
+      location: location
     });
     
     setQuestData({
@@ -354,6 +427,7 @@ export default function ZooQuest() {
       name: '',
       age: '',
       date: '',
+      selectedZoo: '',
       animals: []
     });
     
@@ -1044,4 +1118,5 @@ export default function ZooQuest() {
       <Footer />
     </div>
   );
+
 }
