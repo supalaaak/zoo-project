@@ -1,7 +1,8 @@
 // src/components/dashboard/ZooQuestProgressWidget.jsx
 'use client'
 
-import { useState } from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Link from 'next/link';
 
 export function ZooQuestProgressWidget({ quests }) {
@@ -93,3 +94,16 @@ export function ZooQuestProgressWidget({ quests }) {
     </div>
   );
 }
+
+ZooQuestProgressWidget.propTypes = {
+  quests: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      icon: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      completed: PropTypes.number.isRequired,
+      total: PropTypes.number.isRequired,
+      intro: PropTypes.string.isRequired
+    })
+  ).isRequired
+};

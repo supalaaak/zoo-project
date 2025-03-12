@@ -1,6 +1,7 @@
 // src/components/dashboard/WeatherWidget.jsx
 'use client'
 
+import React from 'react';
 import { useState, useEffect } from 'react';
 
 export function WeatherWidget() {

@@ -1,6 +1,7 @@
 // src/components/layout/Navbar.jsx
 'use client'
 
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 

@@ -1,7 +1,8 @@
 // src/components/ui/TestimonialCarousel.jsx
 'use client'
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 export function TestimonialCarousel({ testimonials, interval = 6000 }) {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -49,3 +50,14 @@ export function TestimonialCarousel({ testimonials, interval = 6000 }) {
     </>
   );
 }
+
+TestimonialCarousel.propTypes = {
+  testimonials: PropTypes.arrayOf(
+    PropTypes.shape({
+      quote: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      role: PropTypes.string.isRequired
+    })
+  ).isRequired,
+  interval: PropTypes.number
+};

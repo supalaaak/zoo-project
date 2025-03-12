@@ -1,6 +1,9 @@
 // src/components/dashboard/HomeExplorerWidget.jsx
 'use client'
 
+import React from 'react';
+import PropTypes from 'prop-types';
+
 export function HomeExplorerWidget({ observations }) {
   return (
     <div className="bg-white overflow-hidden shadow rounded-lg">
@@ -40,3 +43,15 @@ export function HomeExplorerWidget({ observations }) {
     </div>
   );
 }
+
+HomeExplorerWidget.propTypes = {
+  observations: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired,
+      location: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired
+    })
+  ).isRequired
+};

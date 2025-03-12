@@ -1,7 +1,8 @@
 // src/components/ui/MoonPhaseDisplay.jsx
 'use client'
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 export function MoonPhaseDisplay({ className = '', interval = 2000, size = 'text-6xl', bounce = false }) {
   const [moonPhase, setMoonPhase] = useState('🌕');
@@ -26,3 +27,10 @@ export function MoonPhaseDisplay({ className = '', interval = 2000, size = 'text
     </div>
   );
 }
+
+MoonPhaseDisplay.propTypes = {
+  className: PropTypes.string,
+  interval: PropTypes.number,
+  size: PropTypes.string,
+  bounce: PropTypes.bool
+};

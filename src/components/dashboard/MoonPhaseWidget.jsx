@@ -1,6 +1,7 @@
 // src/components/dashboard/MoonPhaseWidget.jsx
 'use client'
 
+import React from 'react';
 import { MoonPhaseDisplay } from '../ui/MoonPhaseDisplay';
 
 export function MoonPhaseWidget() {
