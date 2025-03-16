@@ -1,7 +1,11 @@
+// src/auth.ts
+
 import NextAuth from 'next-auth';
 import { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
+import { findUserByEmail } from '@/lib/user'; // Make sure this import is correct
+import bcrypt from 'bcryptjs';
 
 // Define your authentication configuration
 const authConfig: NextAuthConfig = {
@@ -17,35 +21,55 @@ const authConfig: NextAuthConfig = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        // This is where you would usually fetch your user from a database
-        // For this example, we'll just check if email and password are provided
-        const { email, password } = credentials as {
-          email: string;
-          password: string;
-        };
+        // Add extensive logging to debug the issue
+        console.log("Authorize function called with credentials:",
+          credentials ? { email: credentials.email, password: '***' } : 'no credentials');
 
-        // Replace this with your actual authentication logic
-        // For example, checking against a database
-        if (!email || !password) {
+        try {
+          // Validate credentials
+          if (!credentials?.email || !credentials?.password) {
+            console.log("Missing email or password");
+            return null;
+          }
+
+          // Find user
+          const user = await findUserByEmail(credentials.email);
+          console.log("User lookup result:", user ? "User found" : "User not found");
+
+          if (!user) {
+            console.log("User not found for email:", credentials.email);
+            return null;
+          }
+
+          // Verify password - make sure user.password exists
+          if (!user.password) {
+            console.log("User has no password hash stored");
+            return null;
+          }
+
+          // Compare password
+          const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+          console.log("Password validation result:", isPasswordValid);
+
+          if (!isPasswordValid) {
+            console.log("Invalid password");
+            return null;
+          }
+
+          // Create a safe user object without the password
+          const safeUser = {
+            id: user.id,
+            name: user.username || "User",
+            email: user.email
+          };
+
+          console.log("Authentication successful, returning user");
+          return safeUser;
+        } catch (error) {
+          console.error("Error in authorize callback:", error);
+          // Return null instead of throwing error for better NextAuth handling
           return null;
         }
-
-        // Here you would typically:
-        // 1. Check if the user exists in your database
-        // 2. Verify the password hash matches
-        // 3. Return the user object if authentication succeeds
-
-        // Mock user for demonstration - replace with database query
-        if (email === "user@example.com" && password === "password123") {
-          return {
-            id: "1",
-            name: "User",
-            email: "user@example.com",
-          };
-        }
-
-        // Authentication failed
-        return null;
       }
     }),
   ],
@@ -71,6 +95,11 @@ const authConfig: NextAuthConfig = {
       // If user is provided, add it to the token
       if (user) {
         token.id = user.id;
+        token.name = user.name; // This will be the username from authorize
+        token.email = user.email;
+        // Optionally store username separately if needed
+        token.username = user.name; // In this case, user.name is already the username
+
       }
       return token;
     },
@@ -78,6 +107,10 @@ const authConfig: NextAuthConfig = {
       // Add user ID to the session from token
       if (token && session.user) {
         session.user.id = token.id as string;
+        session.user.name = token.name as string; // This will be the username
+        // Optionally add username as a separate property if needed
+        (session.user as any).username = token.username as string;
+
       }
       return session;
     },

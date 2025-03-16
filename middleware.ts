@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
-import { getToken } from 'next-auth/jwt';
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
@@ -22,16 +21,16 @@ export async function middleware(request: NextRequest) {
     pathname === route
   );
 
-  // Get the token from the request
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  // Check for the session cookie instead of Next Auth token
+  const sessionCookie = request.cookies.get('session')?.value;
 
-  // If it's a protected route and there's no token, redirect to login
-  if (isProtectedRoute && !token) {
+  // If it's a protected route and there's no session, redirect to login
+  if (isProtectedRoute && !sessionCookie) {
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
   // If it's an auth route and the user is already logged in, redirect to dashboard
-  if (isAuthRoute && token) {
+  if (isAuthRoute && sessionCookie) {
     return NextResponse.redirect(new URL('/widgets', request.url));
   }
 

@@ -1,8 +1,10 @@
+// src/app/auth/signup/page.tsx
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -41,14 +43,43 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      // Here you would connect to your actual signup API
-      // This is a placeholder for demonstration
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Step 1: Register the user using your existing API
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
       
-      // If signup is successful, redirect to dashboard or login
+      // Step 2: Sign in with NextAuth using credentials
+      const signInResult = await signIn('credentials', {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (signInResult?.error) {
+        console.error('Sign-in after registration failed:', signInResult.error);
+        throw new Error('Account created but sign-in failed. Please go to login page.');
+      }
+      
+      // If signup and sign-in are successful, redirect to dashboard
       router.push('/widgets');
-    } catch (err) {
-      setError('Registration failed. Please try again.');
+      router.refresh(); // Force refresh to update session
+    } catch (err: any) {
+      setError(err.message || 'Registration failed. Please try again.');
+      console.error('Signup error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -59,16 +90,14 @@ export default function SignupPage() {
     setError('');
 
     try {
-      // Here you would implement Google OAuth
-      // This is a placeholder for demonstration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // If signup is successful, redirect to dashboard
-      router.push('/widgets');
-    } catch (err) {
-      setError('Google signup failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+      // Use NextAuth's signIn method with Google provider
+      await signIn('google', { callbackUrl: '/widgets' });
+      // No need for router.push as signIn with callbackUrl handles redirection
+    } catch (err: any) {
+      setError(err.message || 'Google signup failed. Please try again.');
+      console.error('Google signup error:', err);
+      setIsLoading(false); // Only set loading to false if there's an error
+      // For successful Google auth, the page will redirect so we don't need to set isLoading=false
     }
   };
 

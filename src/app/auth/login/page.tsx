@@ -1,3 +1,5 @@
+//src/app/auth/login/page.tsx
+
 'use client';
 
 import { useState } from 'react';
@@ -28,22 +30,23 @@ export default function LoginPage() {
     setError('');
 
     try {
+      // Use NextAuth's signIn function instead of custom API
       const result = await signIn('credentials', {
+        redirect: false,
         email: formData.email,
         password: formData.password,
-        redirect: false,
       });
 
       if (result?.error) {
-        setError('Login failed. Please check your credentials and try again.');
-        return;
+        throw new Error(result.error || 'Login failed');
       }
 
       // If login is successful, redirect to dashboard
       router.push('/widgets');
       router.refresh(); // Refresh to update the session data
-    } catch (err) {
-      setError('Login failed. Please check your credentials and try again.');
+    } catch (err: any) {
+      setError(err.message || 'Login failed. Please check your credentials and try again.');
+      console.error('Login error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -51,11 +54,15 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
+    setError('');
+    
     try {
+      // Use NextAuth to handle Google login
       await signIn('google', { callbackUrl: '/widgets' });
-      // No need to manually redirect as signIn with callbackUrl handles it
-    } catch (error) {
-      setError('Google login failed. Please try again.');
+      // No need for router.push as signIn with callbackUrl handles redirection
+    } catch (err: any) {
+      setError(err.message || 'Google login failed. Please try again.');
+      console.error('Google login error:', err);
       setIsLoading(false);
     }
   };
