@@ -64,8 +64,8 @@ const authConfig: NextAuthConfig = {
           return {
             id: user.id,
             name: user.username || "User",
-            email: user.email,
-            image: user.image // Optional, include if your user model has it
+            email: user.email
+            // image: user.image // Optional, include if your user model has it
           };
         } catch (error) {
           console.error("Error in authorize callback:", error);
