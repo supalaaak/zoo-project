@@ -20,7 +20,7 @@ const authConfig: NextAuthConfig = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials) {
+      async authorize(credentials, request): Promise<any> { // Added request parameter
         // Add extensive logging to debug the issue
         console.log("Authorize function called with credentials:",
           credentials ? { email: credentials.email, password: '***' } : 'no credentials');
@@ -32,8 +32,11 @@ const authConfig: NextAuthConfig = {
             return null;
           }
 
+          // Properly type the email as string
+          const email = credentials.email as string;
+          
           // Find user
-          const user = await findUserByEmail(credentials.email);
+          const user = await findUserByEmail(email);
           console.log("User lookup result:", user ? "User found" : "User not found");
 
           if (!user) {
@@ -47,8 +50,9 @@ const authConfig: NextAuthConfig = {
             return null;
           }
 
-          // Compare password
-          const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+          // Compare password with proper typing
+          const password = credentials.password as string;
+          const isPasswordValid = await bcrypt.compare(password, user.password);
           console.log("Password validation result:", isPasswordValid);
 
           if (!isPasswordValid) {
@@ -56,15 +60,13 @@ const authConfig: NextAuthConfig = {
             return null;
           }
 
-          // Create a safe user object without the password
-          const safeUser = {
+          // Return user object that matches the User type expected by NextAuth
+          return {
             id: user.id,
             name: user.username || "User",
-            email: user.email
+            email: user.email,
+            image: user.image // Optional, include if your user model has it
           };
-
-          console.log("Authentication successful, returning user");
-          return safeUser;
         } catch (error) {
           console.error("Error in authorize callback:", error);
           // Return null instead of throwing error for better NextAuth handling
@@ -99,7 +101,6 @@ const authConfig: NextAuthConfig = {
         token.email = user.email;
         // Optionally store username separately if needed
         token.username = user.name; // In this case, user.name is already the username
-
       }
       return token;
     },
@@ -110,7 +111,6 @@ const authConfig: NextAuthConfig = {
         session.user.name = token.name as string; // This will be the username
         // Optionally add username as a separate property if needed
         (session.user as any).username = token.username as string;
-
       }
       return session;
     },
